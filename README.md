@@ -61,13 +61,6 @@
 3. 点击 "Run workflow" 手动触发
 4. 查看运行日志，确认是否成功
 
-## 文件说明
-├── .github/workflows/
-│   └── freexcraft-renewal.yml    # GitHub Actions 工作流配置
-├── freexcraft_renewal.py         # 主程序脚本
-├── README.md                     # 本文档
-
-
 ## 工作原理
 
 1. **动态抓取配置**：脚本自动从 FreeXCraft 页面提取最新的 action_id、supabase URL 和 API key
