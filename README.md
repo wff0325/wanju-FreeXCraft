@@ -62,3 +62,47 @@
 4. 查看运行日志，确认是否成功
 
 ## 文件说明
+├── .github/workflows/
+│   └── freexcraft-renewal.yml    # GitHub Actions 工作流配置
+├── freexcraft_renewal.py         # 主程序脚本
+├── README.md                     # 本文档
+
+
+## 工作原理
+
+1. **动态抓取配置**：脚本自动从 FreeXCraft 页面提取最新的 action_id、supabase URL 和 API key
+2. **登录认证**：使用你的账号登录获取访问令牌
+3. **续期操作**：模拟点击 "Extend Time" 按钮的请求
+4. **验证结果**：查询服务器信息确认续期成功
+5. **通知发送**：通过 Telegram Bot 发送续期结果通知
+
+## 注意事项
+
+1. **安全性**：所有敏感信息都存储在 GitHub Secrets 中，不会暴露在代码中
+2. **频率限制**：FreeXCraft 可能有请求频率限制，不建议设置过于频繁的定时任务
+3. **代理需求**：如果 GitHub Actions IP 被 FreeXCraft 屏蔽，可能需要配置代理
+4. **脚本更新**：如果 FreeXCraft 更新了前端，可能需要更新抓取逻辑
+
+## 故障排除
+
+### 1. 续期失败
+- 检查 Secrets 配置是否正确
+- 查看 Actions 运行日志获取详细错误信息
+- 确认服务器ID是否正确
+
+### 2. Telegram 通知未收到
+- 确认 Bot Token 和 User ID 正确
+- Bot 需要先发送 `/start` 给用户
+- 检查是否有网络限制
+
+### 3. 动态配置抓取失败
+- FreeXCraft 可能更新了页面结构
+- 需要更新 `fetch_live_configs` 函数中的正则表达式
+
+## 贡献与反馈
+
+如遇问题或有改进建议，欢迎提交 Issue 或 Pull Request。
+
+## 免责声明
+
+本项目仅供学习交流使用，请遵守 FreeXCraft 的服务条款。使用者应对自己的行为负责。
