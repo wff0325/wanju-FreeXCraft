@@ -1,41 +1,39 @@
-name: FreeXCraft Auto Renew
+name: FreeXCraft Auto Renewal
 
 on:
+  workflow_dispatch:  # 手动触发
   schedule:
-    - cron: '0 */3 * * *'
-  workflow_dispatch: # 手动触发按钮
+    # 每天北京时间 12:00 运行 (UTC+8 对应 04:00 UTC)
+    - cron: '0 4 * * *'
 
 jobs:
   renew:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
-        run: pip install requests
-
-      - name: Smart Run (Immediate for Manual, 10s Random for Auto)
-        env:
-          FXC_EMAIL: ${{ secrets.FXC_EMAIL }}
-          FXC_PASS: ${{ secrets.FXC_PASS }}
-          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
-          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-        run: |
-          # 检查触发事件的类型
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "🚀 检测到手动触发，立即执行续期！"
-            python renew.py
-          else
-            # 随机等待 1 到 10 秒，不再傻等一小时
-            delay=$((1 + RANDOM % 10))
-            printdate=$(date -d "+8 hours" "+%Y-%m-%d %H:%M:%S")
-            echo "⏰ 定时任务触发 (北京时间: $printdate)"
-            echo "💤 随机等待 $delay 秒后开始..."
-            sleep $delay
-            python renew.py
-          fi
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests
+        pip install python-dotenv  # 可选，用于本地测试
+    
+    - name: Run renewal script
+      env:
+        FXC_EMAIL: ${{ secrets.FXC_EMAIL }}
+        FXC_PASS: ${{ secrets.FXC_PASS }}
+        FXC_SERVER_ID: ${{ secrets.FXC_SERVER_ID }}
+        TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+        TG_USER_ID: ${{ secrets.TG_USER_ID }}
+        # 可选：如果需要代理，可以配置以下环境变量
+        # PROXY_URL: ${{ secrets.PROXY_URL }}
+        # PROXY_USER: ${{ secrets.PROXY_USER }}
+        # PROXY_PASS: ${{ secrets.PROXY_PASS }}
+      run: |
+        python freexcraft_renewal.py
